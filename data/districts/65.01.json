@@ -1,0 +1,42 @@
+[
+  {
+    "code": "65.01.01",
+    "value": "Tanjung Palas"
+  },
+  {
+    "code": "65.01.02",
+    "value": "Tanjung Palas Barat"
+  },
+  {
+    "code": "65.01.03",
+    "value": "Tanjung Palas Utara"
+  },
+  {
+    "code": "65.01.04",
+    "value": "Tanjung Palas Timur"
+  },
+  {
+    "code": "65.01.05",
+    "value": "Tanjung Selor"
+  },
+  {
+    "code": "65.01.06",
+    "value": "Tanjung Palas Tengah"
+  },
+  {
+    "code": "65.01.07",
+    "value": "Peso"
+  },
+  {
+    "code": "65.01.08",
+    "value": "Peso Hilir"
+  },
+  {
+    "code": "65.01.09",
+    "value": "Sekatak"
+  },
+  {
+    "code": "65.01.10",
+    "value": "Bunyu"
+  }
+]
