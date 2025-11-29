@@ -1,6 +1,6 @@
 # Geo-ID
 
-Indonesian Administrative Region API built with Go and [gowok](https://github.com/gowok/gowok) framework.
+Indonesian Administrative Region API built with Go and [Fiber](https://gofiber.io) framework.
 
 ## Overview
 
@@ -10,7 +10,7 @@ Geo-ID provides a REST API for accessing Indonesian administrative region data i
 
 - 🇮🇩 Complete Indonesian administrative region data
 - 🚀 Built with Go for high performance
-- 🔧 Uses gowok framework
+- 🔧 Uses Fiber framework
 - 📦 File-based data storage (JSON)
 - 🔄 Easy data updates via download script
 
@@ -43,14 +43,15 @@ chmod +x scripts/download_data.sh
 ### Development Mode
 
 ```bash
-go run main.go --config=config.yaml
+```bash
+go run main.go
 ```
 
 ### Production Build
 
 ```bash
 go build -o geo-id
-./geo-id --config=config.yaml
+./geo-id
 ```
 
 The server will start on `http://localhost:8080` by default.
@@ -94,7 +95,7 @@ Response:
   {
     "code": "12",
     "value": "SUMATERA UTARA"
-  }
+  },
   ...
 ]
 ```
@@ -111,34 +112,42 @@ curl http://localhost:8080/states/11/cities
 
 ## Configuration
 
-Edit `config.yaml` to customize the server settings:
+## Configuration
 
-```yaml
-web:
-  enabled: true
-  host: :8080
+The server port can be configured via environment variable:
+
+```bash
+PORT=3000 ./geo-id
 ```
+
+Default port is `8080`.
 
 ## Project Structure
 
 ```
 .
-├── config.yaml              # Server configuration
 ├── main.go                  # Application entry point
-├── internal/
+├── go.mod                   # Go module dependencies
+├── go.sum                   # Go module checksums
+├── .gitignore              # Git ignore rules
+├── README.md               # Project documentation
+├── internal/               # Internal application code
 │   ├── model/
-│   │   └── region.go       # Data models
+│   │   └── region.go       # Data models (Region struct)
 │   ├── service/
-│   │   └── location.go     # Business logic
+│   │   └── location.go     # Business logic (data reading)
 │   └── handler/
-│       └── location.go     # HTTP handlers
-├── data/                    # JSON data files
-│   ├── states.json
-│   ├── cities/
-│   ├── districts/
-│   └── villages/
-└── scripts/
-    └── download_data.sh    # Data download script
+│       └── location.go     # HTTP handlers (API endpoints)
+├── scripts/                # Utility scripts
+│   ├── download_data.sh    # Bash wrapper for extraction
+│   └── extract_data.py     # Python script to extract SQL to JSON
+├── data/                   # Generated JSON data files
+│   ├── states.json         # 38 provinces
+│   ├── cities/             # 38 files (one per province)
+│   ├── districts/          # 514 files (one per city)
+│   └── villages/           # 7,284 files (one per district)
+└── raw/                    # Downloaded raw data
+    └── wilayah.sql         # Source SQL file from cahyadsn/wilayah
 ```
 
 ## Data Source
@@ -158,7 +167,7 @@ To update the data:
 
 ## Known Issues
 
-⚠️ **Parameter Routes**: Currently, endpoints with URL parameters (e.g., `/states/:id`) are experiencing issues. The `/states` endpoint works correctly, but parameterized routes need debugging. This is being investigated.
+None. All endpoints are fully functional.
 
 ## Development
 
@@ -186,7 +195,7 @@ This project is licensed under the MIT License.
 ## Acknowledgments
 
 - Original project: [lokasi-id](https://github.com/ikhsanfalakh/lokasi-id) by ikhsanfalakh
-- Framework: [gowok](https://github.com/gowok/gowok)
+- Framework: [Fiber](https://gofiber.io)
 - Data source: [cahyadsn/wilayah](https://github.com/cahyadsn/wilayah) - Official Indonesian administrative region data
 
 ## Support
