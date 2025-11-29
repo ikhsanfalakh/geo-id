@@ -5,10 +5,17 @@ import (
 	"path/filepath"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/swagger"
+	_ "github.com/ikhsanfalakh/geo-id/docs"
 	"github.com/ikhsanfalakh/geo-id/internal/handler"
 	"github.com/ikhsanfalakh/geo-id/internal/service"
 )
 
+// @title Geo-ID API
+// @version 1.0
+// @description API for Indonesian Administrative Regions (Provinces, Cities, Districts, Villages)
+// @host localhost:8080
+// @BasePath /
 func main() {
 	// Initialize Fiber app
 	app := fiber.New(fiber.Config{
@@ -22,6 +29,9 @@ func main() {
 	// Initialize service and handler
 	svc := service.NewLocationService(dataDir)
 	h := handler.NewLocationHandler(svc)
+
+	// Swagger route
+	app.Get("/apidocs/*", swagger.HandlerDefault)
 
 	// Register routes
 	app.Get("/states", h.GetStates)

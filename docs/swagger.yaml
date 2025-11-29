@@ -1,0 +1,221 @@
+basePath: /
+definitions:
+  model.Region:
+    description: Region information
+    properties:
+      code:
+        type: string
+      value:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for Indonesian Administrative Regions (Provinces, Cities, Districts,
+    Villages)
+  title: Geo-ID API
+  version: "1.0"
+paths:
+  /cities/{id}:
+    get:
+      description: Get specific city/regency details by its code
+      parameters:
+      - description: City Code (e.g. 11.01)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Region'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get city by ID
+      tags:
+      - cities
+  /cities/{id}/districts:
+    get:
+      description: Get list of districts (Kecamatan) in a specific city
+      parameters:
+      - description: City Code (e.g. 11.01)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Region'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get districts in city
+      tags:
+      - cities
+  /districts/{id}:
+    get:
+      description: Get specific district details by its code
+      parameters:
+      - description: District Code (e.g. 11.01.01)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Region'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get district by ID
+      tags:
+      - districts
+  /districts/{id}/villages:
+    get:
+      description: Get list of villages (Kelurahan/Desa) in a specific district
+      parameters:
+      - description: District Code (e.g. 11.01.01)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Region'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get villages in district
+      tags:
+      - districts
+  /states:
+    get:
+      description: Get list of all provinces in Indonesia
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Region'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all states
+      tags:
+      - states
+  /states/{id}:
+    get:
+      description: Get specific province details by its code
+      parameters:
+      - description: State Code (e.g. 11)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Region'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get state by ID
+      tags:
+      - states
+  /states/{id}/cities:
+    get:
+      description: Get list of cities/regencies in a specific province
+      parameters:
+      - description: State Code (e.g. 11)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Region'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get cities in state
+      tags:
+      - states
+  /villages/{id}:
+    get:
+      description: Get specific village details by its code
+      parameters:
+      - description: Village Code (e.g. 11.01.01.2001)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Region'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get village by ID
+      tags:
+      - villages
+swagger: "2.0"

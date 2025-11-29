@@ -12,12 +12,14 @@ Geo-ID provides a REST API for accessing Indonesian administrative region data i
 - 🚀 Built with Go for high performance
 - 🔧 Uses Fiber framework
 - 📦 File-based data storage (JSON)
-- 🔄 Easy data updates via download script
+- � Swagger/OpenAPI documentation
+- �🔄 Easy data updates via download script
 
 ## Prerequisites
 
 - Go 1.21 or higher
 - Python 3.x (for data extraction script)
+- `swag` CLI (optional, for regenerating docs)
 
 ## Installation
 
@@ -55,6 +57,14 @@ go build -o geo-id
 ```
 
 The server will start on `http://localhost:8080` by default.
+
+## API Documentation
+
+Interactive API documentation (Swagger/OpenAPI) is available at:
+
+```
+http://localhost:8080/apidocs/index.html
+```
 
 ## API Endpoints
 
