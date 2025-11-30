@@ -1,12 +1,16 @@
 package main
 
 import (
+	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
-	_ "github.com/ikhsanfalakh/geo-id/docs"
+	"github.com/joho/godotenv"
+
+	"github.com/ikhsanfalakh/geo-id/docs"
 	"github.com/ikhsanfalakh/geo-id/internal/handler"
 	"github.com/ikhsanfalakh/geo-id/internal/service"
 )
@@ -25,25 +29,44 @@ import (
 // @tag.name villages
 // @tag.description Operations regarding villages
 func main() {
+	// Load .env file if it exists (ignore error if file doesn't exist)
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found, using environment variables or defaults")
+	}
+
+	// Get configuration from environment variables with defaults
+	appName := getEnv("APP_NAME", "Geo-ID API")
+	appVersion := getEnv("APP_VERSION", "1.0")
+	env := getEnv("ENV", "development")
+	enableSwagger := getEnvAsBool("ENABLE_SWAGGER", true)
+
 	// Initialize Fiber app
 	app := fiber.New(fiber.Config{
-		AppName: "Geo-ID API v1.0",
+		AppName: appName + " v" + appVersion,
 	})
 
 	// Get data directory
-	cwd, _ := os.Getwd()
-	dataDir := filepath.Join(cwd, "data")
+	dataDir := getEnv("DATA_DIR", "")
+	if dataDir == "" {
+		cwd, _ := os.Getwd()
+		dataDir = filepath.Join(cwd, "data")
+	}
 
 	// Initialize service and handler
 	svc := service.NewLocationService(dataDir)
 	h := handler.NewLocationHandler(svc)
 
+	// Configure Swagger host dynamically based on PORT
+	port := getEnv("PORT", "8080")
+	docs.SwaggerInfo.Host = "localhost:" + port
+
 	// Serve static assets
 	app.Static("/assets", "./docs/assets")
 
-	// Swagger route
-	app.Get("/apidocs/*", swagger.New(swagger.Config{
-		CustomStyle: `
+	// Swagger route (conditionally enabled)
+	if enableSwagger {
+		app.Get("/apidocs/*", swagger.New(swagger.Config{
+			CustomStyle: `
 			.swagger-ui .topbar { background-color: #1b1b1b; }
 			.swagger-ui .topbar .link img { display: none; }
 			.swagger-ui .topbar .link svg { display: none; }
@@ -68,7 +91,11 @@ func main() {
 			}
 			.swagger-ui .topbar .download-url-wrapper { display: none; } 
 		`,
-	}))
+		}))
+		log.Printf("Swagger UI enabled at /apidocs/index.html")
+	} else {
+		log.Printf("Swagger UI is disabled (ENV=%s)", env)
+	}
 
 	// Register routes
 	app.Get("/states", h.GetStates)
@@ -84,13 +111,25 @@ func main() {
 	app.Get("/villages/:id", h.GetVillage)
 
 	// Start server
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
-	println("Server starting on port", port)
+	log.Printf("Starting %s v%s on port %s (ENV=%s)", appName, appVersion, port, env)
 	if err := app.Listen(":" + port); err != nil {
 		panic(err)
 	}
+}
+
+// getEnv retrieves an environment variable or returns a default value
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+// getEnvAsBool retrieves an environment variable as a boolean or returns a default value
+func getEnvAsBool(key string, defaultValue bool) bool {
+	valStr := getEnv(key, "")
+	if val, err := strconv.ParseBool(valStr); err == nil {
+		return val
+	}
+	return defaultValue
 }

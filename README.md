@@ -34,7 +34,13 @@ cd geo-id
 go mod download
 ```
 
-3. Download the data:
+3. Set up environment variables (optional):
+```bash
+cp .env.example .env
+# Edit .env with your preferred configuration
+```
+
+4. Download the data:
 ```bash
 chmod +x scripts/download_data.sh
 ./scripts/download_data.sh
@@ -122,15 +128,67 @@ curl http://localhost:8080/states/11/cities
 
 ## Configuration
 
-## Configuration
+The application can be configured using environment variables. You can set these in a `.env` file or export them in your shell.
 
-The server port can be configured via environment variable:
+### Environment Variables
 
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `PORT` | Server port | `8080` | `3000` |
+| `APP_NAME` | Application name | `Geo-ID API` | `My Geo API` |
+| `APP_VERSION` | Application version | `1.0` | `2.0` |
+| `ENV` | Environment mode | `development` | `production` |
+| `ENABLE_SWAGGER` | Enable/disable Swagger UI | `true` | `false` |
+| `DATA_DIR` | Custom data directory path | `./data` | `/path/to/data` |
+
+### Using .env File
+
+1. Copy the example file:
 ```bash
-PORT=3000 ./geo-id
+cp .env.example .env
 ```
 
-Default port is `8080`.
+2. Edit `.env` with your configuration:
+```bash
+PORT=3000
+ENV=production
+ENABLE_SWAGGER=false
+```
+
+3. Run the application (it will automatically load `.env`):
+```bash
+./geo-id
+```
+
+### Using Environment Variables Directly
+
+```bash
+PORT=3000 ENV=production ENABLE_SWAGGER=false ./geo-id
+```
+
+### Configuration Examples
+
+**Development Mode (default):**
+```bash
+# Uses defaults from .env.example
+go run main.go
+```
+
+**Production Mode:**
+```bash
+# Create .env file
+cat > .env << EOF
+PORT=8080
+ENV=production
+ENABLE_SWAGGER=false
+APP_NAME=Geo-ID API
+APP_VERSION=1.0
+EOF
+
+# Run the application
+./geo-id
+```
+
 
 ## Project Structure
 
