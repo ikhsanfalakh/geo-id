@@ -139,25 +139,31 @@ Default port is `8080`.
 ├── main.go                  # Application entry point
 ├── go.mod                   # Go module dependencies
 ├── go.sum                   # Go module checksums
-├── .gitignore              # Git ignore rules
-├── README.md               # Project documentation
-├── internal/               # Internal application code
+├── .gitignore               # Git ignore rules
+├── README.md                # Project documentation
+├── docs/                    # Swagger documentation
+│   ├── assets/              # Static assets (logos, etc.)
+│   ├── docs.go              # Generated Swagger Go code
+│   ├── swagger.json         # Generated Swagger JSON
+│   └── swagger.yaml         # Generated Swagger YAML
+├── internal/                # Internal application code
 │   ├── model/
-│   │   └── region.go       # Data models (Region struct)
+│   │   ├── region.go        # Data models (Region struct)
+│   │   └── error.go         # Error response model
 │   ├── service/
-│   │   └── location.go     # Business logic (data reading)
+│   │   └── location.go      # Business logic (data reading)
 │   └── handler/
-│       └── location.go     # HTTP handlers (API endpoints)
-├── scripts/                # Utility scripts
-│   ├── download_data.sh    # Bash wrapper for extraction
-│   └── extract_data.py     # Python script to extract SQL to JSON
-├── data/                   # Generated JSON data files
-│   ├── states.json         # 38 provinces
-│   ├── cities/             # 38 files (one per province)
-│   ├── districts/          # 514 files (one per city)
-│   └── villages/           # 7,284 files (one per district)
-└── raw/                    # Downloaded raw data
-    └── wilayah.sql         # Source SQL file from cahyadsn/wilayah
+│       └── location.go      # HTTP handlers (API endpoints)
+├── scripts/                 # Utility scripts
+│   ├── download_data.sh     # Bash wrapper for extraction
+│   └── extract_data.py      # Python script to extract SQL to JSON
+├── data/                    # Generated JSON data files
+│   ├── states.json          # 38 provinces
+│   ├── cities/              # 38 files (one per province)
+│   ├── districts/           # 514 files (one per city)
+│   └── villages/            # 7,284 files (one per district)
+└── raw/                     # Downloaded raw data
+    └── wilayah.sql          # Source SQL file from cahyadsn/wilayah
 ```
 
 ## Data Source
