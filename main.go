@@ -12,6 +12,7 @@ import (
 
 	"github.com/ikhsanfalakh/geo-id/docs"
 	"github.com/ikhsanfalakh/geo-id/internal/handler"
+	"github.com/ikhsanfalakh/geo-id/internal/model"
 	"github.com/ikhsanfalakh/geo-id/internal/service"
 )
 
@@ -98,6 +99,15 @@ func main() {
 	}
 
 	// Register routes
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(model.NewSuccessResponse(fiber.Map{
+			"app":      appName,
+			"version":  appVersion,
+			"docs_url": "/apidocs/index.html",
+			"message":  "Welcome to Geo-ID API",
+		}))
+	})
+
 	app.Get("/states", h.GetStates)
 	app.Get("/states/:id", h.GetState)
 	app.Get("/states/:id/cities", h.GetCities)
