@@ -19,7 +19,7 @@ func NewLocationHandler(s *service.LocationService) *LocationHandler {
 // @Tags states
 // @Produce json
 // @Success 200 {array} model.Region
-// @Failure 500 {object} map[string]string
+// @Failure 500 {object} model.ErrorResponse
 // @Router /states [get]
 func (h *LocationHandler) GetStates(c *fiber.Ctx) error {
 	states, err := h.Service.GetStates()
@@ -38,7 +38,7 @@ func (h *LocationHandler) GetStates(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "State Code (e.g. 11)"
 // @Success 200 {object} model.Region
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} model.ErrorResponse
 // @Router /states/{id} [get]
 func (h *LocationHandler) GetState(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -58,7 +58,7 @@ func (h *LocationHandler) GetState(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "State Code (e.g. 11)"
 // @Success 200 {array} model.Region
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} model.ErrorResponse
 // @Router /states/{id}/cities [get]
 func (h *LocationHandler) GetCities(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -78,7 +78,7 @@ func (h *LocationHandler) GetCities(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "City Code (e.g. 11.01)"
 // @Success 200 {object} model.Region
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} model.ErrorResponse
 // @Router /cities/{id} [get]
 func (h *LocationHandler) GetCity(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -98,7 +98,7 @@ func (h *LocationHandler) GetCity(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "City Code (e.g. 11.01)"
 // @Success 200 {array} model.Region
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} model.ErrorResponse
 // @Router /cities/{id}/districts [get]
 func (h *LocationHandler) GetDistricts(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -118,7 +118,7 @@ func (h *LocationHandler) GetDistricts(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "District Code (e.g. 11.01.01)"
 // @Success 200 {object} model.Region
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} model.ErrorResponse
 // @Router /districts/{id} [get]
 func (h *LocationHandler) GetDistrict(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -138,7 +138,7 @@ func (h *LocationHandler) GetDistrict(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "District Code (e.g. 11.01.01)"
 // @Success 200 {array} model.Region
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} model.ErrorResponse
 // @Router /districts/{id}/villages [get]
 func (h *LocationHandler) GetVillages(c *fiber.Ctx) error {
 	id := c.Params("id")
@@ -158,7 +158,7 @@ func (h *LocationHandler) GetVillages(c *fiber.Ctx) error {
 // @Produce json
 // @Param id path string true "Village Code (e.g. 11.01.01.2001)"
 // @Success 200 {object} model.Region
-// @Failure 404 {object} map[string]string
+// @Failure 404 {object} model.ErrorResponse
 // @Router /villages/{id} [get]
 func (h *LocationHandler) GetVillage(c *fiber.Ctx) error {
 	id := c.Params("id")

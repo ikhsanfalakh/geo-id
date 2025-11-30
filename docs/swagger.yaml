@@ -1,11 +1,20 @@
 basePath: /
 definitions:
+  model.ErrorResponse:
+    description: Error information
+    properties:
+      error:
+        example: Region not found
+        type: string
+    type: object
   model.Region:
     description: Region information
     properties:
       code:
+        example: "11"
         type: string
       value:
+        example: ACEH
         type: string
     type: object
 host: localhost:8080
@@ -35,9 +44,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get city by ID
       tags:
       - cities
@@ -62,9 +69,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get districts in city
       tags:
       - cities
@@ -87,9 +92,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get district by ID
       tags:
       - districts
@@ -114,9 +117,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get villages in district
       tags:
       - districts
@@ -135,9 +136,7 @@ paths:
         "500":
           description: Internal Server Error
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get all states
       tags:
       - states
@@ -160,9 +159,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get state by ID
       tags:
       - states
@@ -187,9 +184,7 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get cities in state
       tags:
       - states
@@ -212,10 +207,17 @@ paths:
         "404":
           description: Not Found
           schema:
-            additionalProperties:
-              type: string
-            type: object
+            $ref: '#/definitions/model.ErrorResponse'
       summary: Get village by ID
       tags:
       - villages
 swagger: "2.0"
+tags:
+- description: Operations regarding provinces
+  name: states
+- description: Operations regarding cities/regencies
+  name: cities
+- description: Operations regarding districts
+  name: districts
+- description: Operations regarding villages
+  name: villages

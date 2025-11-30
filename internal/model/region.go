@@ -4,6 +4,6 @@ package model
 // @Description Region information
 // @name Region
 type Region struct {
-	Code  string `json:"code"`
-	Value string `json:"value"`
+	Code  string `json:"code" example:"11"`
+	Value string `json:"value" example:"ACEH"`
 }

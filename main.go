@@ -16,6 +16,14 @@ import (
 // @description API for Indonesian Administrative Regions (Provinces, Cities, Districts, Villages)
 // @host localhost:8080
 // @BasePath /
+// @tag.name states
+// @tag.description Operations regarding provinces
+// @tag.name cities
+// @tag.description Operations regarding cities/regencies
+// @tag.name districts
+// @tag.description Operations regarding districts
+// @tag.name villages
+// @tag.description Operations regarding villages
 func main() {
 	// Initialize Fiber app
 	app := fiber.New(fiber.Config{
@@ -30,8 +38,37 @@ func main() {
 	svc := service.NewLocationService(dataDir)
 	h := handler.NewLocationHandler(svc)
 
+	// Serve static assets
+	app.Static("/assets", "./docs/assets")
+
 	// Swagger route
-	app.Get("/apidocs/*", swagger.HandlerDefault)
+	app.Get("/apidocs/*", swagger.New(swagger.Config{
+		CustomStyle: `
+			.swagger-ui .topbar { background-color: #1b1b1b; }
+			.swagger-ui .topbar .link img { display: none; }
+			.swagger-ui .topbar .link svg { display: none; }
+			.swagger-ui .topbar .link::before { 
+				content: '';
+				display: inline-block;
+				width: 35px;
+				height: 35px;
+				background-image: url('/assets/logo-geo.svg');
+				background-size: contain;
+				background-repeat: no-repeat;
+				vertical-align: middle;
+				margin-right: 10px;
+			}
+			.swagger-ui .topbar .link::after { 
+				content: 'Geo-ID'; 
+				color: #fff; 
+				font-size: 24px; 
+				font-weight: 800; 
+				letter-spacing: 1px;
+				vertical-align: middle;
+			}
+			.swagger-ui .topbar .download-url-wrapper { display: none; } 
+		`,
+	}))
 
 	// Register routes
 	app.Get("/states", h.GetStates)
