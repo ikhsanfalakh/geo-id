@@ -103,17 +103,21 @@ curl http://localhost:8080/states
 
 Response:
 ```json
-[
-  {
-    "code": "11",
-    "value": "ACEH"
-  },
-  {
-    "code": "12",
-    "value": "SUMATERA UTARA"
-  },
-  ...
-]
+{
+  "status": 200,
+  "message": "SUCCESS",
+  "data": [
+    {
+      "code": "11",
+      "value": "ACEH"
+    },
+    {
+      "code": "12",
+      "value": "SUMATERA UTARA"
+    },
+    ...
+  ]
+}
 ```
 
 ### Get specific province

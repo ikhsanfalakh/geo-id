@@ -1,11 +1,28 @@
 basePath: /
 definitions:
-  model.ErrorResponse:
-    description: Error information
+  model.APIErrorResponse:
+    description: Error API response wrapper
     properties:
       error:
         example: Region not found
         type: string
+      message:
+        example: NOT_FOUND
+        type: string
+      status:
+        example: 404
+        type: integer
+    type: object
+  model.APIResponse:
+    description: Successful API response wrapper
+    properties:
+      data: {}
+      message:
+        example: SUCCESS
+        type: string
+      status:
+        example: 200
+        type: integer
     type: object
   model.Region:
     description: Region information
@@ -40,11 +57,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Region'
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Region'
+              type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get city by ID
       tags:
       - cities
@@ -63,13 +85,18 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.Region'
-            type: array
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Region'
+                  type: array
+              type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get districts in city
       tags:
       - cities
@@ -88,11 +115,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Region'
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Region'
+              type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get district by ID
       tags:
       - districts
@@ -111,13 +143,18 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.Region'
-            type: array
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Region'
+                  type: array
+              type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get villages in district
       tags:
       - districts
@@ -130,13 +167,18 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.Region'
-            type: array
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Region'
+                  type: array
+              type: object
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get all states
       tags:
       - states
@@ -155,11 +197,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Region'
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Region'
+              type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get state by ID
       tags:
       - states
@@ -178,13 +225,18 @@ paths:
         "200":
           description: OK
           schema:
-            items:
-              $ref: '#/definitions/model.Region'
-            type: array
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Region'
+                  type: array
+              type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get cities in state
       tags:
       - states
@@ -203,11 +255,16 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.Region'
+            allOf:
+            - $ref: '#/definitions/model.APIResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.Region'
+              type: object
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/model.APIErrorResponse'
       summary: Get village by ID
       tags:
       - villages

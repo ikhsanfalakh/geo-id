@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/ikhsanfalakh/geo-id/internal/model"
 	"github.com/ikhsanfalakh/geo-id/internal/service"
 )
 
@@ -18,17 +19,19 @@ func NewLocationHandler(s *service.LocationService) *LocationHandler {
 // @Description Get list of all provinces in Indonesia
 // @Tags states
 // @Produce json
-// @Success 200 {array} model.Region
-// @Failure 500 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=[]model.Region}
+// @Failure 500 {object} model.APIErrorResponse
 // @Router /states [get]
 func (h *LocationHandler) GetStates(c *fiber.Ctx) error {
 	states, err := h.Service.GetStates()
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(model.NewErrorResponse(
+			fiber.StatusInternalServerError,
+			"INTERNAL_SERVER_ERROR",
+			err,
+		))
 	}
-	return c.JSON(states)
+	return c.JSON(model.NewSuccessResponse(states))
 }
 
 // GetState godoc
@@ -37,18 +40,20 @@ func (h *LocationHandler) GetStates(c *fiber.Ctx) error {
 // @Tags states
 // @Produce json
 // @Param id path string true "State Code (e.g. 11)"
-// @Success 200 {object} model.Region
-// @Failure 404 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=model.Region}
+// @Failure 404 {object} model.APIErrorResponse
 // @Router /states/{id} [get]
 func (h *LocationHandler) GetState(c *fiber.Ctx) error {
 	id := c.Params("id")
 	state, err := h.Service.GetState(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusNotFound).JSON(model.NewErrorResponse(
+			fiber.StatusNotFound,
+			"NOT_FOUND",
+			err,
+		))
 	}
-	return c.JSON(state)
+	return c.JSON(model.NewSuccessResponse(state))
 }
 
 // GetCities godoc
@@ -57,18 +62,20 @@ func (h *LocationHandler) GetState(c *fiber.Ctx) error {
 // @Tags states
 // @Produce json
 // @Param id path string true "State Code (e.g. 11)"
-// @Success 200 {array} model.Region
-// @Failure 404 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=[]model.Region}
+// @Failure 404 {object} model.APIErrorResponse
 // @Router /states/{id}/cities [get]
 func (h *LocationHandler) GetCities(c *fiber.Ctx) error {
 	id := c.Params("id")
 	cities, err := h.Service.GetCities(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusNotFound).JSON(model.NewErrorResponse(
+			fiber.StatusNotFound,
+			"NOT_FOUND",
+			err,
+		))
 	}
-	return c.JSON(cities)
+	return c.JSON(model.NewSuccessResponse(cities))
 }
 
 // GetCity godoc
@@ -77,18 +84,20 @@ func (h *LocationHandler) GetCities(c *fiber.Ctx) error {
 // @Tags cities
 // @Produce json
 // @Param id path string true "City Code (e.g. 11.01)"
-// @Success 200 {object} model.Region
-// @Failure 404 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=model.Region}
+// @Failure 404 {object} model.APIErrorResponse
 // @Router /cities/{id} [get]
 func (h *LocationHandler) GetCity(c *fiber.Ctx) error {
 	id := c.Params("id")
 	city, err := h.Service.GetCity(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusNotFound).JSON(model.NewErrorResponse(
+			fiber.StatusNotFound,
+			"NOT_FOUND",
+			err,
+		))
 	}
-	return c.JSON(city)
+	return c.JSON(model.NewSuccessResponse(city))
 }
 
 // GetDistricts godoc
@@ -97,18 +106,20 @@ func (h *LocationHandler) GetCity(c *fiber.Ctx) error {
 // @Tags cities
 // @Produce json
 // @Param id path string true "City Code (e.g. 11.01)"
-// @Success 200 {array} model.Region
-// @Failure 404 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=[]model.Region}
+// @Failure 404 {object} model.APIErrorResponse
 // @Router /cities/{id}/districts [get]
 func (h *LocationHandler) GetDistricts(c *fiber.Ctx) error {
 	id := c.Params("id")
 	districts, err := h.Service.GetDistricts(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusNotFound).JSON(model.NewErrorResponse(
+			fiber.StatusNotFound,
+			"NOT_FOUND",
+			err,
+		))
 	}
-	return c.JSON(districts)
+	return c.JSON(model.NewSuccessResponse(districts))
 }
 
 // GetDistrict godoc
@@ -117,18 +128,20 @@ func (h *LocationHandler) GetDistricts(c *fiber.Ctx) error {
 // @Tags districts
 // @Produce json
 // @Param id path string true "District Code (e.g. 11.01.01)"
-// @Success 200 {object} model.Region
-// @Failure 404 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=model.Region}
+// @Failure 404 {object} model.APIErrorResponse
 // @Router /districts/{id} [get]
 func (h *LocationHandler) GetDistrict(c *fiber.Ctx) error {
 	id := c.Params("id")
 	district, err := h.Service.GetDistrict(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusNotFound).JSON(model.NewErrorResponse(
+			fiber.StatusNotFound,
+			"NOT_FOUND",
+			err,
+		))
 	}
-	return c.JSON(district)
+	return c.JSON(model.NewSuccessResponse(district))
 }
 
 // GetVillages godoc
@@ -137,18 +150,20 @@ func (h *LocationHandler) GetDistrict(c *fiber.Ctx) error {
 // @Tags districts
 // @Produce json
 // @Param id path string true "District Code (e.g. 11.01.01)"
-// @Success 200 {array} model.Region
-// @Failure 404 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=[]model.Region}
+// @Failure 404 {object} model.APIErrorResponse
 // @Router /districts/{id}/villages [get]
 func (h *LocationHandler) GetVillages(c *fiber.Ctx) error {
 	id := c.Params("id")
 	villages, err := h.Service.GetVillages(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusNotFound).JSON(model.NewErrorResponse(
+			fiber.StatusNotFound,
+			"NOT_FOUND",
+			err,
+		))
 	}
-	return c.JSON(villages)
+	return c.JSON(model.NewSuccessResponse(villages))
 }
 
 // GetVillage godoc
@@ -157,16 +172,18 @@ func (h *LocationHandler) GetVillages(c *fiber.Ctx) error {
 // @Tags villages
 // @Produce json
 // @Param id path string true "Village Code (e.g. 11.01.01.2001)"
-// @Success 200 {object} model.Region
-// @Failure 404 {object} model.ErrorResponse
+// @Success 200 {object} model.APIResponse{data=model.Region}
+// @Failure 404 {object} model.APIErrorResponse
 // @Router /villages/{id} [get]
 func (h *LocationHandler) GetVillage(c *fiber.Ctx) error {
 	id := c.Params("id")
 	village, err := h.Service.GetVillage(id)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err.Error(),
-		})
+		return c.Status(fiber.StatusNotFound).JSON(model.NewErrorResponse(
+			fiber.StatusNotFound,
+			"NOT_FOUND",
+			err,
+		))
 	}
-	return c.JSON(village)
+	return c.JSON(model.NewSuccessResponse(village))
 }
