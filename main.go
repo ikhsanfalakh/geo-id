@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
@@ -57,9 +58,19 @@ func main() {
 	svc := service.NewLocationService(dataDir)
 	h := handler.NewLocationHandler(svc)
 
-	// Configure Swagger host dynamically based on PORT
+	// Configure Swagger host dynamically based on BASE_URL
 	port := getEnv("PORT", "8080")
-	docs.SwaggerInfo.Host = "localhost:" + port
+	baseURL := getEnv("BASE_URL", "localhost:"+port)
+
+	swaggerHost := strings.TrimPrefix(baseURL, "http://")
+	swaggerHost = strings.TrimPrefix(swaggerHost, "https://")
+
+	if parts := strings.SplitN(swaggerHost, "/", 2); len(parts) == 2 {
+		docs.SwaggerInfo.Host = parts[0]
+		docs.SwaggerInfo.BasePath = "/" + strings.TrimRight(parts[1], "/")
+	} else {
+		docs.SwaggerInfo.Host = swaggerHost
+	}
 
 	// Serve static assets
 	app.Static("/assets", "./docs/assets")

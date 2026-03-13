@@ -167,7 +167,7 @@ ENABLE_SWAGGER=false
 ### Using Environment Variables Directly
 
 ```bash
-PORT=3000 ENV=production ENABLE_SWAGGER=false ./geo-id
+PORT=3000 ENV=production ENABLE_SWAGGER=true ./geo-id
 ```
 
 ### Configuration Examples
