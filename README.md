@@ -12,8 +12,10 @@ Geo-ID provides a REST API for accessing Indonesian administrative region data i
 - 🚀 Built with Go for high performance
 - 🔧 Uses Fiber framework
 - 📦 File-based data storage (JSON)
-- � Swagger/OpenAPI documentation
-- �🔄 Easy data updates via download script
+- 📄 Swagger/OpenAPI documentation
+- 🔑 API key support with tiered rate limiting
+- 🛡️ Sliding window rate limiter (in-memory, thread-safe)
+- 🔄 Easy data updates via download script
 
 ## Prerequisites
 
@@ -51,7 +53,6 @@ chmod +x scripts/download_data.sh
 ### Development Mode
 
 ```bash
-```bash
 go run main.go
 ```
 
@@ -74,6 +75,10 @@ http://localhost:8080/apidocs/index.html
 
 ## API Endpoints
 
+### Root
+
+- `GET /` - API info (name, version, docs URL)
+
 ### States (Provinces)
 
 - `GET /states` - Get all states/provinces
@@ -93,6 +98,68 @@ http://localhost:8080/apidocs/index.html
 ### Villages
 
 - `GET /villages/:id` - Get specific village by code
+
+## Rate Limiting
+
+All API endpoints are protected by a **sliding window rate limiter**.
+
+| Tier | Identifier | Default limit |
+|------|-----------|---------------|
+| Anonymous | Client IP | 60 req/min |
+| API Key | `X-API-KEY` header value | 1 000 req/min |
+
+### Standard Rate Limit Headers
+
+Every API response includes the following headers:
+
+| Header | Description |
+|--------|-------------|
+| `X-RateLimit-Limit` | Maximum requests allowed in the current window |
+| `X-RateLimit-Remaining` | Requests remaining in the current window |
+| `X-RateLimit-Reset` | Unix timestamp when the oldest token exits the window |
+
+### Exceeding the Limit
+
+When the limit is exceeded, the API responds with **HTTP 429**:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests"
+  }
+}
+```
+
+### Exempt Paths
+
+The following paths are **not** subject to rate limiting:
+
+- `/apidocs/*`
+- `/swagger/*`
+- `/actuator/health`
+- `/assets/*`
+
+## API Key Authentication
+
+Clients can send an `X-API-KEY` header to access the higher-rate API key tier.
+
+```bash
+curl -H "X-API-KEY: your_api_key" http://localhost:8080/states
+```
+
+API keys are configured via the `API_KEYS` environment variable (comma-separated list). An invalid key returns **HTTP 401**:
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_API_KEY",
+    "message": "Invalid API key"
+  }
+}
+```
 
 ## Example Usage
 
@@ -130,20 +197,29 @@ curl http://localhost:8080/states/11
 curl http://localhost:8080/states/11/cities
 ```
 
+### Authenticated request (API key tier)
+```bash
+curl -H "X-API-KEY: internal123" http://localhost:8080/states
+```
+
 ## Configuration
 
 The application can be configured using environment variables. You can set these in a `.env` file or export them in your shell.
 
 ### Environment Variables
 
-| Variable | Description | Default | Example |
-|----------|-------------|---------|---------|
-| `PORT` | Server port | `8080` | `3000` |
-| `APP_NAME` | Application name | `Geo-ID API` | `My Geo API` |
-| `APP_VERSION` | Application version | `1.0` | `2.0` |
-| `ENV` | Environment mode | `development` | `production` |
-| `ENABLE_SWAGGER` | Enable/disable Swagger UI | `true` | `false` |
-| `DATA_DIR` | Custom data directory path | `./data` | `/path/to/data` |
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `PORT` | Server port | `8080` |
+| `BASE_URL` | Public base URL (used for Swagger host) | `localhost:8080` |
+| `APP_NAME` | Application name | `Geo-ID API` |
+| `APP_VERSION` | Application version | `1.0` |
+| `ENV` | Environment mode (`development`, `staging`, `production`) | `development` |
+| `ENABLE_SWAGGER` | Enable/disable Swagger UI | `true` |
+| `DATA_DIR` | Custom data directory path | `./data` |
+| `API_KEYS` | Comma-separated list of valid API keys | _(empty)_ |
+| `RATE_LIMIT_ANONYMOUS` | Max requests/min for anonymous (IP-based) clients | `60` |
+| `RATE_LIMIT_API_KEY` | Max requests/min for API key authenticated clients | `1000` |
 
 ### Using .env File
 
@@ -154,9 +230,12 @@ cp .env.example .env
 
 2. Edit `.env` with your configuration:
 ```bash
-PORT=3000
+PORT=8080
 ENV=production
 ENABLE_SWAGGER=false
+API_KEYS=key1,key2,key3
+RATE_LIMIT_ANONYMOUS=30
+RATE_LIMIT_API_KEY=500
 ```
 
 3. Run the application (it will automatically load `.env`):
@@ -167,7 +246,7 @@ ENABLE_SWAGGER=false
 ### Using Environment Variables Directly
 
 ```bash
-PORT=3000 ENV=production ENABLE_SWAGGER=true ./geo-id
+PORT=8080 ENV=production ENABLE_SWAGGER=true ./geo-id
 ```
 
 ### Configuration Examples
@@ -180,19 +259,19 @@ go run main.go
 
 **Production Mode:**
 ```bash
-# Create .env file
 cat > .env << EOF
 PORT=8080
 ENV=production
 ENABLE_SWAGGER=false
 APP_NAME=Geo-ID API
 APP_VERSION=1.0
+API_KEYS=prod-key-1,prod-key-2
+RATE_LIMIT_ANONYMOUS=60
+RATE_LIMIT_API_KEY=1000
 EOF
 
-# Run the application
 ./geo-id
 ```
-
 
 ## Project Structure
 
@@ -201,6 +280,7 @@ EOF
 ├── main.go                  # Application entry point
 ├── go.mod                   # Go module dependencies
 ├── go.sum                   # Go module checksums
+├── .env.example             # Example environment configuration
 ├── .gitignore               # Git ignore rules
 ├── README.md                # Project documentation
 ├── docs/                    # Swagger documentation
@@ -209,6 +289,10 @@ EOF
 │   ├── swagger.json         # Generated Swagger JSON
 │   └── swagger.yaml         # Generated Swagger YAML
 ├── internal/                # Internal application code
+│   ├── middleware/
+│   │   ├── apikey.go        # API key service (env-based key store)
+│   │   ├── ratelimiter.go   # Sliding window rate limiter (in-memory)
+│   │   └── ratelimit_middleware.go  # Fiber rate limit middleware
 │   ├── model/
 │   │   ├── region.go        # Data models (Region struct)
 │   │   └── error.go         # Error response model
@@ -242,10 +326,6 @@ To update the data:
 ```bash
 ./scripts/download_data.sh
 ```
-
-## Known Issues
-
-None. All endpoints are fully functional.
 
 ## Development
 

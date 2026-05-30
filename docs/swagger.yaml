@@ -1,4 +1,38 @@
 basePath: /
+info:
+  contact: {}
+  description: |-
+    API for Indonesian Administrative Regions (Provinces, Cities, Districts, Villages).
+
+    ## Authentication
+
+    All endpoints support an optional **API Key** via the `X-API-KEY` request header.
+    Providing a valid key grants a higher rate limit tier (default: 1 000 req/min).
+    Omitting the header falls back to the anonymous tier (default: 60 req/min), identified by client IP.
+
+    ## Rate Limiting
+
+    Every response includes the following headers:
+
+    | Header | Description |
+    |--------|-------------|
+    | `X-RateLimit-Limit` | Maximum requests allowed in the current window |
+    | `X-RateLimit-Remaining` | Requests remaining in the current window |
+    | `X-RateLimit-Reset` | Unix timestamp when the window resets |
+
+    When the limit is exceeded the API returns **HTTP 429**.
+    Sending an unrecognised API key returns **HTTP 401**.
+  title: Geo-ID API
+  version: "1.0"
+host: localhost:8080
+securityDefinitions:
+  ApiKeyAuth:
+    type: apiKey
+    in: header
+    name: X-API-KEY
+    description: |-
+      Optional API key for elevated rate limit tier (1 000 req/min).
+      Leave empty to use the anonymous tier (60 req/min, identified by IP).
 definitions:
   model.APIErrorResponse:
     description: Error API response wrapper
@@ -34,13 +68,38 @@ definitions:
         example: ACEH
         type: string
     type: object
-host: localhost:8080
-info:
-  contact: {}
-  description: API for Indonesian Administrative Regions (Provinces, Cities, Districts,
-    Villages)
-  title: Geo-ID API
-  version: "1.0"
+  model.RateLimitError:
+    description: Rate limit exceeded error response
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      error:
+        type: object
+        properties:
+          code:
+            type: string
+            example: RATE_LIMIT_EXCEEDED
+          message:
+            type: string
+            example: Too many requests
+  model.UnauthorizedError:
+    description: Invalid API key error response
+    type: object
+    properties:
+      success:
+        type: boolean
+        example: false
+      error:
+        type: object
+        properties:
+          code:
+            type: string
+            example: INVALID_API_KEY
+          message:
+            type: string
+            example: Invalid API key
 paths:
   /cities/{id}:
     get:
@@ -63,10 +122,20 @@ paths:
                 data:
                   $ref: '#/definitions/model.Region'
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
+      security:
+      - ApiKeyAuth: []
       summary: Get city by ID
       tags:
       - cities
@@ -93,10 +162,20 @@ paths:
                     $ref: '#/definitions/model.Region'
                   type: array
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
+      security:
+      - ApiKeyAuth: []
       summary: Get districts in city
       tags:
       - cities
@@ -121,10 +200,20 @@ paths:
                 data:
                   $ref: '#/definitions/model.Region'
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
+      security:
+      - ApiKeyAuth: []
       summary: Get district by ID
       tags:
       - districts
@@ -151,10 +240,20 @@ paths:
                     $ref: '#/definitions/model.Region'
                   type: array
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
+      security:
+      - ApiKeyAuth: []
       summary: Get villages in district
       tags:
       - districts
@@ -175,10 +274,20 @@ paths:
                     $ref: '#/definitions/model.Region'
                   type: array
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
         "500":
           description: Internal Server Error
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get all states
       tags:
       - states
@@ -203,10 +312,20 @@ paths:
                 data:
                   $ref: '#/definitions/model.Region'
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
+      security:
+      - ApiKeyAuth: []
       summary: Get state by ID
       tags:
       - states
@@ -233,10 +352,20 @@ paths:
                     $ref: '#/definitions/model.Region'
                   type: array
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
+      security:
+      - ApiKeyAuth: []
       summary: Get cities in state
       tags:
       - states
@@ -261,10 +390,20 @@ paths:
                 data:
                   $ref: '#/definitions/model.Region'
               type: object
+        "401":
+          description: Unauthorized — invalid API key
+          schema:
+            $ref: '#/definitions/model.UnauthorizedError'
         "404":
           description: Not Found
           schema:
             $ref: '#/definitions/model.APIErrorResponse'
+        "429":
+          description: Too Many Requests — rate limit exceeded
+          schema:
+            $ref: '#/definitions/model.RateLimitError'
+      security:
+      - ApiKeyAuth: []
       summary: Get village by ID
       tags:
       - villages

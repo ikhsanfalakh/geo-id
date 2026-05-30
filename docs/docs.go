@@ -14,6 +14,14 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "in": "header",
+            "name": "X-API-KEY",
+            "description": "Optional API key for elevated rate limit tier (1 000 req/min). Leave empty to use the anonymous tier (60 req/min, identified by IP)."
+        }
+    },
     "paths": {
         "/cities/{id}": {
             "get": {
@@ -25,6 +33,7 @@ const docTemplate = `{
                     "cities"
                 ],
                 "summary": "Get city by ID",
+                "security": [{"ApiKeyAuth": []}],
                 "parameters": [
                     {
                         "type": "string",
@@ -53,10 +62,22 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.APIErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     }
                 }
@@ -72,6 +93,7 @@ const docTemplate = `{
                     "cities"
                 ],
                 "summary": "Get districts in city",
+                "security": [{"ApiKeyAuth": []}],
                 "parameters": [
                     {
                         "type": "string",
@@ -103,10 +125,22 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.APIErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     }
                 }
@@ -122,6 +156,7 @@ const docTemplate = `{
                     "districts"
                 ],
                 "summary": "Get district by ID",
+                "security": [{"ApiKeyAuth": []}],
                 "parameters": [
                     {
                         "type": "string",
@@ -150,10 +185,22 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.APIErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     }
                 }
@@ -169,6 +216,7 @@ const docTemplate = `{
                     "districts"
                 ],
                 "summary": "Get villages in district",
+                "security": [{"ApiKeyAuth": []}],
                 "parameters": [
                     {
                         "type": "string",
@@ -200,10 +248,22 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.APIErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     }
                 }
@@ -219,6 +279,7 @@ const docTemplate = `{
                     "states"
                 ],
                 "summary": "Get all states",
+                "security": [{"ApiKeyAuth": []}],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -239,6 +300,18 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     },
                     "500": {
@@ -260,6 +333,7 @@ const docTemplate = `{
                     "states"
                 ],
                 "summary": "Get state by ID",
+                "security": [{"ApiKeyAuth": []}],
                 "parameters": [
                     {
                         "type": "string",
@@ -288,10 +362,22 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.APIErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     }
                 }
@@ -307,6 +393,7 @@ const docTemplate = `{
                     "states"
                 ],
                 "summary": "Get cities in state",
+                "security": [{"ApiKeyAuth": []}],
                 "parameters": [
                     {
                         "type": "string",
@@ -338,10 +425,22 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.APIErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     }
                 }
@@ -357,6 +456,7 @@ const docTemplate = `{
                     "villages"
                 ],
                 "summary": "Get village by ID",
+                "security": [{"ApiKeyAuth": []}],
                 "parameters": [
                     {
                         "type": "string",
@@ -385,10 +485,22 @@ const docTemplate = `{
                             ]
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized — invalid API key",
+                        "schema": {
+                            "$ref": "#/definitions/model.UnauthorizedError"
+                        }
+                    },
                     "404": {
                         "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/model.APIErrorResponse"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests — rate limit exceeded",
+                        "schema": {
+                            "$ref": "#/definitions/model.RateLimitError"
                         }
                     }
                 }
@@ -442,6 +554,52 @@ const docTemplate = `{
                     "example": "ACEH"
                 }
             }
+        },
+        "model.RateLimitError": {
+            "description": "Rate limit exceeded error response",
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "error": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "string",
+                            "example": "RATE_LIMIT_EXCEEDED"
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Too many requests"
+                        }
+                    }
+                }
+            }
+        },
+        "model.UnauthorizedError": {
+            "description": "Invalid API key error response",
+            "type": "object",
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "error": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "string",
+                            "example": "INVALID_API_KEY"
+                        },
+                        "message": {
+                            "type": "string",
+                            "example": "Invalid API key"
+                        }
+                    }
+                }
+            }
         }
     },
     "tags": [
@@ -471,7 +629,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Geo-ID API",
-	Description:      "API for Indonesian Administrative Regions (Provinces, Cities, Districts, Villages)",
+	Description:      "API for Indonesian Administrative Regions (Provinces, Cities, Districts, Villages).\n\n## Authentication\n\nAll endpoints support an optional **API Key** via the `X-API-KEY` request header.\nProviding a valid key grants a higher rate limit tier (default: 1 000 req/min).\nOmitting the header falls back to the anonymous tier (default: 60 req/min), identified by client IP.\n\n## Rate Limiting\n\nEvery response includes `X-RateLimit-Limit`, `X-RateLimit-Remaining`, and `X-RateLimit-Reset` headers.\nExceeding the limit returns **HTTP 429**. An invalid API key returns **HTTP 401**.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

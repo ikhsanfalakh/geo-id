@@ -13,6 +13,7 @@ import (
 
 	"github.com/ikhsanfalakh/geo-id/docs"
 	"github.com/ikhsanfalakh/geo-id/internal/handler"
+	"github.com/ikhsanfalakh/geo-id/internal/middleware"
 	"github.com/ikhsanfalakh/geo-id/internal/model"
 	"github.com/ikhsanfalakh/geo-id/internal/service"
 )
@@ -53,6 +54,14 @@ func main() {
 		cwd, _ := os.Getwd()
 		dataDir = filepath.Join(cwd, "data")
 	}
+
+	// Initialize API key service & rate limiter middleware
+	apiKeySvc := middleware.NewAPIKeyService()
+	limitAnon := getEnvAsInt("RATE_LIMIT_ANONYMOUS", middleware.DefaultLimitAnonymous)
+	limitKey := getEnvAsInt("RATE_LIMIT_API_KEY", middleware.DefaultLimitAPIKey)
+	rateLimitCfg := middleware.NewRateLimitConfig(apiKeySvc, limitAnon, limitKey)
+	app.Use(middleware.RateLimitMiddleware(rateLimitCfg))
+	log.Printf("Rate limiting enabled: anonymous=%d req/min, api_key=%d req/min", limitAnon, limitKey)
 
 	// Initialize service and handler
 	svc := service.NewLocationService(dataDir)
@@ -150,6 +159,15 @@ func getEnv(key, defaultValue string) string {
 func getEnvAsBool(key string, defaultValue bool) bool {
 	valStr := getEnv(key, "")
 	if val, err := strconv.ParseBool(valStr); err == nil {
+		return val
+	}
+	return defaultValue
+}
+
+// getEnvAsInt retrieves an environment variable as an integer or returns a default value
+func getEnvAsInt(key string, defaultValue int) int {
+	valStr := getEnv(key, "")
+	if val, err := strconv.Atoi(valStr); err == nil && val > 0 {
 		return val
 	}
 	return defaultValue
