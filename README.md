@@ -273,6 +273,54 @@ EOF
 ./geo-id
 ```
 
+## Running with PM2 (Production)
+
+You can manage and keep the Go application running in the background on your server using [PM2](https://pm2.keymetrics.io/).
+
+### 1. Build the Binary
+
+Before starting with PM2, compile the Go binary:
+
+```bash
+go build -o geo-id main.go
+```
+
+### 2. Start with PM2
+
+Make sure you are in the project root directory (so the app can locate `.env` and the `data/` folder):
+
+```bash
+# Start using configuration from .env
+pm2 start ./geo-id --name geo-id
+
+# Or override environment variables (e.g. PORT=8090) directly:
+PORT=8090 pm2 start ./geo-id --name geo-id
+```
+
+> **Note:** Do NOT pass variables after `--` (e.g., `pm2 start ./geo-id -- PORT=8090`), as that passes CLI arguments instead of environment variables.
+
+### 3. Managing the Process
+
+```bash
+# Check status
+pm2 status
+
+# View live logs
+pm2 logs geo-id
+
+# Restart process after changing .env
+# IMPORTANT: Use --update-env so PM2 refreshes environment variables
+pm2 restart geo-id --update-env
+
+# Stop or remove process
+pm2 stop geo-id
+pm2 delete geo-id
+
+# Auto-start on server boot
+pm2 save
+pm2 startup
+```
+
 ## Project Structure
 
 ```
